@@ -15,37 +15,15 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"🤖 Bot başarıyla aktif oldu: {bot.user}")
+    print(f"Bot başarıyla aktif oldu: {bot.user}")
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
+@bot.command()
+async def sor(ctx, *, soru):
+    await ctx.send("Düşünüyorum aga, bekle...")
+    try:
+        response = model.generate_content(soru)
+        await ctx.send(response.text)
+    except Exception as e:
+        await ctx.send(f"Bir hata oluştu aga: {e}")
 
-    if bot.user.mentioned_in(message) or message.content.startswith("!sor "):
-        ctx = await bot.get_context(message)
-        soru = message.content.replace(f"<@{bot.user.id}>", "").replace("!sor ", "").strip()
-        
-        if not soru:
-            await message.reply("Aga soruyu unuttun, ne sormak istiyorsun?")
-            return
-            
-        async with ctx.typing():
-            try:
-                response = model.generate_content(soru)
-                await message.reply(response.text[:1950])
-            except Exception as e:
-                print(f"Hata oluştu: {e}")
-                await message.reply("Kafam karıştı aga, bir sorun olabilir.")
-                
-    await bot.process_commands(message)
-import asyncio
-
-async def main():
-    async with bot:
-        await bot.start(DISCORD_TOKEN)
-
-try:
-    asyncio.run(main())
-except Exception as e:
-    print(f"HATA CIKTI AGA: {e}")
+bot.run(DISCORD_TOKEN)
