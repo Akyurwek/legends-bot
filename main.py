@@ -39,5 +39,13 @@ async def on_message(message):
                 await message.reply("Kafam karıştı aga, bir sorun olabilir.")
                 
     await bot.process_commands(message)
+import asyncio
 
-bot.run(DISCORD_TOKEN)
+async def main():
+    async with bot:
+        await bot.start(DISCORD_TOKEN)
+
+try:
+    asyncio.run(main())
+except Exception as e:
+    print(f"HATA CIKTI AGA: {e}")
